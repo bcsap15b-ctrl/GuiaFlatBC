@@ -1,0 +1,16 @@
+status
+
+git status
+
+ver a branch
+git branch
+Trocar branch
+git checkout dev
+
+adicionar o arquivo ao stage
+git add .
+
+git commit -m "Alteração do..."
+
+faz alteração na branch dev
+git push

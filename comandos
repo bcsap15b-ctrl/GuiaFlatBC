@@ -14,3 +14,7 @@ git commit -m "Alteração do..."
 
 faz alteração na branch dev
 git push
+
+
+puxa de git
+git pull

@@ -22,10 +22,13 @@ git pull
 Copiar da dev para a main remota:
 dev local e dev remota tem que está em dia
 git checkout main 
-git fetch dev
-git merge dev
+git pull origin dev
 git push
 
+
+o git pull pode ser substituído por esses
+git fetch origin dev
+git merge dev
 
 
 

@@ -24,7 +24,7 @@ dev local e dev remota tem que está em dia
 git checkout main 
 git fetch dev
 git merge dev
-git pull
+git push
 
 
 

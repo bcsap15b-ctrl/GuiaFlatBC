@@ -4,3 +4,22 @@ guia*
 #jsons
 *.json
 prompt*
+
+
+
+
+
+
+
+
+
+
+
+
+Se abriu no Vim (tela do terminal com ~ nas linhas):
+
+Pressione i para começar a escrever.
+Digite a mensagem do commit.
+Pressione Esc.
+Digite :wq e pressione Enter para salvar e fechar.
+Para sair sem salvar: Esc, digite :q! e pressione Enter.

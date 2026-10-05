@@ -15,9 +15,21 @@ git commit -m "Alteração do..."
 faz alteração na branch dev
 git push
 
-
 puxa de git
 git pull
+
+
+Copiar da dev para a main remota:
+dev local e dev remota tem que está em dia
+git checkout main 
+git fetch dev
+git merge dev
+git pull
+
+
+
+
+
 
 
 Se abriu no Vim (tela do terminal com ~ nas linhas):

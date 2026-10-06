@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guia do FLAT</title>
+  <title>Guia do Flat - Beach Class</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- FontAwesome Ícones -->
@@ -166,7 +166,24 @@
 
   <!-- SCRIPT COM TODO O CONTEÚDO DAS TELAS -->
   <script>
-    const appConfig = { APTO: '', CONDOMINIO: '' };
+    const flatInfoDefaults = {
+      QTDHospedes: 4,
+      DescrFlat: 'Mais espaço, privacidade e contato com a natureza.',
+      DescrCama1: '1 cama queen',
+      DescrCama2: '1 cama auxiliar',
+      DescrSofa: '1 sofá-cama',
+      TEMarcondicionado: 'SIM',
+      TEMsanduicheira: 'SIM',
+      TEMairfryer: 'SIM',
+      TEMmixer: 'SIM',
+      TEMmicroondas: 'SIM',
+      TEMfogaoind: 'SIM',
+      TEMtorradeira: 'SIM',
+      TEMgeladeira: 'SIM',
+      TEMoutros: 'SIM',
+      TEMoutrosDescr: 'TV, cafeteira, secador de cabelo, ...'
+    };
+    const appConfig = { APTO: '', CONDOMINIO: '', ...flatInfoDefaults };
     const firebaseConfig = {
       apiKey: "AIzaSyDnGnx_iRYWf2Ixs8Evz4e7EdxeI3KlQbo",
       authDomain: "guiaflat.firebaseapp.com",
@@ -432,6 +449,7 @@
             BUGGYWHAT: '558191546190',
             BUGGYDESCR: 'Passeio de Buggy, Jet, lancha, translado aeroporto.',
             BUGGYPERFILINSTA: 'buggydojapa',
+            ...flatInfoDefaults,
             SENHAHASH: ' '
           })
         });
@@ -599,7 +617,7 @@
     }
 
     function showParameterLogin(errorMessage = '') {
-      showParameterScreen('Editar Parâmetros', `
+      showParameterScreen('Informações do FLAT', `
         <form onsubmit="submitParameterLogin(event)" class="mx-auto max-w-sm space-y-4">
           <label for="parameter-password" class="block text-sm font-semibold text-gray-700">Senha</label>
           <input id="parameter-password" type="password" autocomplete="current-password" required class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-100">
@@ -699,7 +717,7 @@
         </label>
       `).join('');
 
-      showParameterScreen('Editar Parâmetros', `
+      showParameterScreen('Informações do FLAT', `
         <form onsubmit="saveParameterConfig(event)" class="space-y-4">
           <div class="divide-y divide-gray-100">${rows}</div>
           <p id="parameter-save-status" role="status" class="text-sm text-red-600"></p>
@@ -745,7 +763,7 @@
           status.textContent = result?.error || 'O Firebase não permitiu salvar as informações.';
           return;
         }
-        showParameterScreen('Editar Parâmetros', '<p class="rounded-lg border border-green-200 bg-green-50 p-4 text-center text-sm font-semibold text-green-800">Alterações salvas com sucesso.</p>');
+        showParameterScreen('Informações do FLAT', '<p class="rounded-lg border border-green-200 bg-green-50 p-4 text-center text-sm font-semibold text-green-800">Alterações salvas com sucesso.</p>');
         window.setTimeout(() => window.location.reload(), 1300);
       } catch (error) {
         status.textContent = `Não foi possível salvar no Firebase: ${error.message}`;
@@ -1161,28 +1179,32 @@
               <i class="fa-solid fa-leaf text-emerald-600 text-lg"></i>
               <div>
                 <p class="font-bold capitalize">{{ANDAR}} {{EGARDEN}}</p>
-                <p class="text-[10px]">Mais espaço, privacidade e contato com a natureza.</p>
+                <p class="text-[10px]">{{DescrFlat}}</p>
               </div>
             </div>
 
             <div class="bg-white p-3 rounded-xl border border-gray-100 text-xs space-y-1.5">
-              <p class="font-bold text-[#002b49]">Acomoda até 4 pessoas, contando com:</p>
-              <p><i class="fa-solid fa-bed text-blue-500 mr-2"></i> 1 cama queen</p>
-              <p><i class="fa-solid fa-bed text-blue-500 mr-2"></i> 1 cama auxiliar</p>
-              <p><i class="fa-solid fa-couch text-blue-500 mr-2"></i> 1 sofá-cama</p>
+              <p class="font-bold text-[#002b49]">Acomoda até {{QTDHospedes}} pessoas, contando com:</p>
+              <p><i class="fa-solid fa-bed text-blue-500 mr-2"></i> {{DescrCama1}}</p>
+              <p><i class="fa-solid fa-bed text-blue-500 mr-2"></i> {{DescrCama2}}</p>
+              <p><i class="fa-solid fa-couch text-blue-500 mr-2"></i> {{DescrSofa}}</p>
             </div>
 
             <div class="bg-white p-3 rounded-xl border border-gray-100 text-xs">
               <p class="font-bold text-[#002b49] mb-2">Totalmente equipado e com:</p>
-              <div class="grid grid-cols-2 gap-2 text-[11px] text-gray-700">
-                <p><i class="fa-solid fa-snowflake text-cyan-500 mr-1"></i> Ar condicionado</p>
-                <p><i class="fa-solid fa-bread-slice text-amber-500 mr-1"></i> Sanduicheira</p>
-                <p><i class="fa-solid fa-wind text-gray-500 mr-1"></i> Air-fryer</p>
-                <p><i class="fa-solid fa-blender text-[#0088cc] mr-1"></i> Mixer</p>
-                <p><i class="fa-solid fa-microchip text-indigo-500 mr-1"></i> Micro-ondas</p>
-                <p><i class="fa-solid fa-fire text-red-500 mr-1"></i> Fogão de indução</p>
-                <p><i class="fa-solid fa-box text-orange-500 mr-1"></i> Torradeira</p>
-                <p><i class="fa-solid fa-temperature-low text-blue-600 mr-1"></i> Geladeira</p>
+              <div data-flat-equipment-list class="grid grid-cols-2 gap-2 text-[11px] text-gray-700">
+                <p data-flat-equipment="TEMarcondicionado"><i class="fa-solid fa-snowflake text-cyan-500 mr-1"></i> Ar condicionado</p>
+                <p data-flat-equipment="TEMsanduicheira"><i class="fa-solid fa-bread-slice text-amber-500 mr-1"></i> Sanduicheira</p>
+                <p data-flat-equipment="TEMairfryer"><i class="fa-solid fa-wind text-gray-500 mr-1"></i> Air-fryer</p>
+                <p data-flat-equipment="TEMmixer"><i class="fa-solid fa-blender text-[#0088cc] mr-1"></i> Mixer</p>
+                <p data-flat-equipment="TEMmicroondas"><i class="fa-solid fa-microchip text-indigo-500 mr-1"></i> Micro-ondas</p>
+                <p data-flat-equipment="TEMfogaoind"><i class="fa-solid fa-fire text-red-500 mr-1"></i> Fogão de indução</p>
+                <p data-flat-equipment="TEMtorradeira"><i class="fa-solid fa-box text-orange-500 mr-1"></i> Torradeira</p>
+                <p data-flat-equipment="TEMgeladeira"><i class="fa-solid fa-temperature-low text-blue-600 mr-1"></i> Geladeira</p>
+                <div data-flat-equipment="TEMoutros" class="col-span-2">
+                  <p class="font-bold">Outros</p>
+                  <p data-flat-other-description></p>
+                </div>
               </div>
             </div>
           </div>
@@ -1571,6 +1593,17 @@
 
       title.innerText = data.title;
       content.innerHTML = data.content;
+      if (screenKey === 'flat') {
+        content.querySelectorAll('[data-flat-equipment]').forEach((equipment) => {
+          const configKey = equipment.dataset.flatEquipment;
+          if (String(appConfig[configKey] || '').trim().toUpperCase() !== 'SIM') {
+            equipment.remove();
+          }
+        });
+
+        const otherDescription = content.querySelector('[data-flat-other-description]');
+        if (otherDescription) otherDescription.textContent = appConfig.TEMoutrosDescr || '';
+      }
       screen.classList.remove('hidden');
       updateFirebaseMenuVisibility();
     }

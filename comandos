@@ -2,22 +2,22 @@ status
 
 git status
 
-ver a branch
-git branch
-Trocar branch
-git checkout dev
-
-adicionar o arquivo ao stage
-git add .
-
-git commit -m "Alteração do..."
-
-faz alteração na branch dev
-git push
-
 puxa de git
 git pull
 
+
+ver a branch
+git branch
+sempre trabalhar na DEV
+Trocar branch
+git checkout dev
+
+sempre trabalhar na DEV
+adicionar o arquivo ao stage
+git add .
+git commit -m "Alteração do..."
+faz alteração na branch dev
+git push
 
 Copiar da dev para a main remota:
 dev local e dev remota tem que está em dia

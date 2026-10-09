@@ -24,6 +24,7 @@ dev local e dev remota tem que está em dia
 git checkout main 
 git pull origin dev
 git push
+git checkout dev 
 
 
 o git pull pode ser substituído por esses

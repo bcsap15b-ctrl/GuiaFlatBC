@@ -184,6 +184,8 @@
       TEMoutrosDescr: 'TV, cafeteira, secador de cabelo, ...',
       FOTOdescr: 'Fotos no Airbnb',
       FOTOlink: 'https://www.airbnb.com.br/rooms/1790014310405527210?check_in=2026-10-16&check_out=2026-10-17&search_mode=regular_search&photo_id=2846569000&source_impression_id=p3_01bdb2bf-bdfc-46c5-b3fa-5abd3d1328fe_77f89779-0152-43d5-a34c-2120fb1713ee_0_1790014310405527210_2&previous_page_section_name=1000&federated_search_id=01bdb2bf-bdfc-46c5-b3fa-5abd3d1328fe&modal=PHOTO_TOUR_SCROLLABLE',
+      REDEareacomum: 'Beach Class Solare',
+      SENHAWIFIareacomum: 'solare@solare',
       QTDacessoHospede: '0',
       QTDacessoAnfitriao: '0'
     };
@@ -269,6 +271,7 @@
             appConfig[key] = value == null ? '' : String(value);
           }
         }
+        appConfig.REDEareacomum = userConfig.REDEareacomum == null ? '' : String(userConfig.REDEareacomum);
         firebaseUserKey = requestedApto;
         applyAptoToUI();
         document.getElementById('load-status').classList.add('hidden');
@@ -716,21 +719,136 @@
     }
 
     async function showParameterEditor() {
-      const fields = Object.entries(appConfig).filter(([key]) => !['QTDacessoHospede', 'QTDacessoAnfitriao'].includes(key));
-      const rows = fields.map(([key, value]) => `
-        <label class="grid grid-cols-[minmax(7rem,0.35fr)_minmax(0,1fr)] items-center gap-3 border-b border-gray-100 py-2.5">
-          <span class="break-all text-xs font-semibold text-gray-600">${escapeHtml(key)}</span>
-          <input data-parameter="${escapeHtml(key)}" type="text" value="${escapeHtml(value)}" class="min-w-0 rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-900 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-100">
-        </label>
+      const groups = [
+        {
+          title: 'Dados do FLAT',
+          fields: [
+            ['APTO', 'Apartamento'],
+            ['EMA', 'Email Proprietário'],
+            ['CONDOMINIO', 'Condomínio'],
+            ['CONDREDUZIDO', 'Condomínio Reduzido'],
+            ['ANDAR', 'Andar do FLAT'],
+            ['QTDHospedes', 'Qtd. Hóspedes'],
+            ['CHECKIN', 'Horário Check-in'],
+            ['CHECKOUT', 'Horário Check-out'],
+            ['DescrFlat', 'Descrição Flat'],
+            ['DescrCama1', '1ª Opção Cama'],
+            ['DescrCama2', '2ª Opção Cama'],
+            ['DescrSofa', 'Opção Sofá'],
+            ['TEMarcondicionado', 'Tem Ar condicionado'],
+            ['TEMsanduicheira', 'Tem Sanduicheira'],
+            ['TEMairfryer', 'Tem Air-fryer'],
+            ['TEMmixer', 'Tem Mixer'],
+            ['TEMmicroondas', 'Tem Micro-ondas'],
+            ['TEMfogaoind', 'Tem Fogão de indução'],
+            ['TEMtorradeira', 'Tem Torradeira'],
+            ['TEMgeladeira', 'Tem Geladeira'],
+            ['TEMoutros', 'Tem Outros'],
+            ['TEMoutrosDescr', 'Quais OUTROS'],
+            ['ECOMGARDEN', 'Descrição "e com garden"'],
+            ['EGARDEN', 'Descrição "e Garden"']
+          ]
+        },
+        {
+          title: 'Dados Wi-Fi',
+          fields: [
+            ['REDE', 'Rede FLAT'],
+            ['SENHAWIFI', 'Senha área comum'],
+            ['REDEareacomum', 'Rede área comum'],
+            ['SENHAWIFIareacomum', 'Senha área comum']
+          ]
+        },
+        {
+          title: 'Perfil do FLAT',
+          fields: [
+            ['ANFITR1WHAT', 'WhatsApp 1º Anfitrião'],
+            ['ANFITR1WHATEXIB', 'WhatsApp 1º (exibição)'],
+            ['ANFITR2WHAT', 'WhatsApp 2º Anfitrião'],
+            ['ANFITR2WHATEXIB', 'WhatsApp 2º (exibição)'],
+            ['FLATAIRBNB', 'Airbnb FLAT'],
+            ['FLATINSTAGRAM', 'Instagram FLAT'],
+            ['FLATPERFILINSTAGRAM', 'Perfil Insta. FLAT'],
+            ['FOTOlink', 'Link para fotos'],
+            ['FOTOdescr', 'Descrição link fotos']
+          ]
+        },
+        {
+          title: 'Localização do FLAT',
+          fields: [
+            ['LUGAR1', 'Local Flat'],
+            ['LUGAR2', 'Outro Local FLAT'],
+            ['MAPS', 'Local GoogleMAPS'],
+            ['WAZE', 'Local Waze']
+          ]
+        },
+        {
+          title: 'Dados do Restaurante',
+          fields: [
+            ['NOMERESTAURANTE', 'Nome Restaurante'],
+            ['CAFE', 'Café da manhã'],
+            ['PISCINA', 'Restaurante X Piscina'],
+            ['PRATO', 'Opções Restaurante'],
+            ['RESTWEB', 'Site Restaurante'],
+            ['RESTWHAT', 'WhatsApp Restaurante'],
+            ['RESTWHATEXIB', 'WhatsApp Rest. (exib.)']
+          ]
+        },
+        {
+          title: 'Loja Conveniência',
+          fields: [
+            ['CONVENIENCIA', 'Loja Conveniência'],
+            ['CONVENIENCIAWEB', 'Site L. Conveniência']
+          ]
+        },
+        {
+          title: 'Dados do Buggy',
+          fields: [
+            ['BUGGY', 'Contato Buggy'],
+            ['BUGGYDESCR', 'Descrição Buggy'],
+            ['BUGGYPERFILINSTA', 'Perfil Instagram Buggy'],
+            ['BUGGYWHAT', 'WhatsApp Buggy']
+          ]
+        }
+      ];
+      const fields = new Map(Object.entries(appConfig));
+      const equipmentFields = new Set([
+        'TEMarcondicionado',
+        'TEMsanduicheira',
+        'TEMairfryer',
+        'TEMmixer',
+        'TEMmicroondas',
+        'TEMfogaoind',
+        'TEMtorradeira',
+        'TEMgeladeira',
+        'TEMoutros'
+      ]);
+      const renderRows = (groupFields) => groupFields
+        .filter(([key]) => fields.has(key))
+        .map(([key, label]) => equipmentFields.has(key) ? `
+            <label class="flex items-center justify-between gap-3 border-b border-gray-100 py-2.5 last:border-0">
+              <span class="text-xs font-semibold text-gray-600">${escapeHtml(label)}</span>
+              <input data-parameter="${escapeHtml(key)}" type="checkbox" ${String(fields.get(key)).trim().toUpperCase() === 'SIM' ? 'checked' : ''} class="h-5 w-5 rounded border-gray-300 text-cyan-700 focus:ring-2 focus:ring-cyan-100">
+            </label>
+          ` : `
+            <label class="grid grid-cols-[minmax(7rem,0.35fr)_minmax(0,1fr)] items-center gap-3 border-b border-gray-100 py-2.5 last:border-0">
+              <span class="text-xs font-semibold text-gray-600">${escapeHtml(label)}</span>
+              <input data-parameter="${escapeHtml(key)}" type="text" value="${escapeHtml(fields.get(key))}" class="min-w-0 rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm text-gray-900 focus:border-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-100">
+            </label>
+          `).join('');
+      const sections = groups.map(({ title, fields: groupFields }) => `
+        <section class="rounded-xl border border-gray-200 bg-white p-3 shadow-sm">
+          <h3 class="mb-1 border-b border-cyan-100 pb-2 text-sm font-bold text-[#002b49]">${escapeHtml(title)}</h3>
+          <div>${renderRows(groupFields)}</div>
+        </section>
       `).join('');
 
       showParameterScreen('Informações do FLAT', `
         <form onsubmit="saveParameterConfig(event)" class="space-y-4">
-          <div class="divide-y divide-gray-100">${rows}</div>
+          <div class="space-y-4">${sections}</div>
           <p id="parameter-save-status" role="status" class="text-sm text-red-600"></p>
           <button type="submit" class="w-full rounded-lg bg-[#002b49] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#03446b]">Salvar</button>
         </form>
-        <p class="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">OBS.: As informações preenchidas nesta tela serão utilizadas no seu Guia do Hóspede e ficarão disponíveis em um site público na internet. Isso significa que os dados informados aqui poderão ser visualizados por qualquer pessoa. Por isso, NÃO informar os dados que NÃO queira tornar públicos.</p>
+        <p class="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900">OBS.: As informações preenchidas nesta tela serão utilizadas no seu Guia do Hóspede e ficarão disponíveis em um site público na internet. Isso significa que os dados informados aqui poderão ser visualizados por qualquer pessoa. Por isso, NÃO informar os dados CASO NÃO queira tornar públicos.</p>
       `);
     }
 
@@ -738,7 +856,9 @@
       event.preventDefault();
       const values = {};
       document.querySelectorAll('[data-parameter]').forEach((input) => {
-        values[input.dataset.parameter] = input.value;
+        values[input.dataset.parameter] = input.type === 'checkbox'
+          ? input.checked ? 'SIM' : 'Não'
+          : input.value;
       });
 
       const status = document.getElementById('parameter-save-status');
@@ -950,15 +1070,29 @@
               <h4 class="text-base font-bold text-[#002b49]">Wi-Fi do Flat</h4>
             </div>
 
-            <div class="bg-white p-4 rounded-2xl border border-gray-100 space-y-3 shadow-sm">
+            <div class="bg-cyan-50 p-4 rounded-2xl border-2 border-cyan-300 space-y-3 shadow-md">
               <div>
-                <label class="text-[10px] text-gray-400 font-bold block mb-1 uppercase">Rede:</label>
+                <label class="text-[10px] text-gray-400 font-bold block mb-1 uppercase">Rede do Flat {{APTO}}:</label>
                 <input type="text" readonly value="{{REDE}}" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs font-semibold text-gray-700">
               </div>
               <div>
                 <label class="text-[10px] text-gray-400 font-bold block mb-1 uppercase">Senha:</label>
                 <div class="relative">
                   <input type="text" readonly value="{{SENHAWIFI}}" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs font-semibold text-gray-700">
+                  <i class="fa-solid fa-eye absolute right-3 top-2.5 text-gray-400 text-xs"></i>
+                </div>
+              </div>
+            </div>
+
+            <div data-wifi-common class="bg-white p-4 rounded-2xl border border-gray-100 space-y-3 shadow-sm">
+              <div>
+                <label class="text-[10px] text-gray-400 font-bold block mb-1 uppercase">Rede Área Comum:</label>
+                <input type="text" readonly value="{{REDEareacomum}}" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs font-semibold text-gray-700">
+              </div>
+              <div>
+                <label class="text-[10px] text-gray-400 font-bold block mb-1 uppercase">Senha:</label>
+                <div class="relative">
+                  <input type="text" readonly value="{{SENHAWIFIareacomum}}" class="w-full bg-gray-50 border border-gray-200 rounded-lg p-2 text-xs font-semibold text-gray-700">
                   <i class="fa-solid fa-eye absolute right-3 top-2.5 text-gray-400 text-xs"></i>
                 </div>
               </div>
@@ -1620,6 +1754,9 @@
       title.innerText = data.title;
       content.className = 'p-4 flex-1 min-h-0 overflow-y-auto hide-scrollbar bg-gray-50';
       content.innerHTML = data.content;
+      if (screenKey === 'wifi' && !String(appConfig.REDEareacomum || '').trim()) {
+        content.querySelector('[data-wifi-common]')?.remove();
+      }
       if (screenKey === 'flat') {
         content.querySelectorAll('[data-flat-equipment]').forEach((equipment) => {
           const configKey = equipment.dataset.flatEquipment;
